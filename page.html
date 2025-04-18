@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Super Tableau Interactif</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #2d2d2d;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      width: 80%;
+      margin: 50px auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 12px;
+      text-align: center;
+      border: 1px solid #444;
+    }
+    th {
+      background-color: #444;
+      cursor: pointer;
+    }
+    tr:nth-child(even) {
+      background-color: #333;
+    }
+    tr:hover {
+      background-color: #555;
+    }
+    .search-container {
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+    }
+    input[type="text"] {
+      padding: 8px;
+      width: 200px;
+      background-color: #444;
+      border: 1px solid #666;
+      color: #fff;
+    }
+    .pagination {
+      margin-top: 20px;
+      text-align: center;
+    }
+    .page-btn {
+      padding: 5px 10px;
+      background-color: #444;
+      border: none;
+      color: #fff;
+      margin: 0 2px;
+      cursor: pointer;
+    }
+    .page-btn:hover {
+      background-color: #666;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="search-container">
+      <input type="text" id="searchInput" placeholder="Recherche..." onkeyup="filterTable()">
+      <button onclick="resetTable()">Réinitialiser</button>
+    </div>
+    
+    <table id="dataTable">
+      <thead>
+        <tr>
+          <th onclick="sortTable(0)">Nom</th>
+          <th onclick="sortTable(1)">Âge</th>
+          <th onclick="sortTable(2)">Profession</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Durand</td>
+          <td>25</td>
+          <td>Développeur</td>
+        </tr>
+        <tr>
+          <td>Clowé</td>
+          <td>28</td>
+          <td>Designer</td>
+        </tr>
+        <tr>
+          <td>Alice</td>
+          <td>30</td>
+          <td>Artiste</td>
+        </tr>
+        <tr>
+          <td>Bob</td>
+          <td>22</td>
+          <td>Ingénieur</td>
+        </tr>
+        <tr>
+          <td>Chloe</td>
+          <td>27</td>
+          <td>Chef de projet</td>
+        </tr>
+        <tr>
+          <td>Eve</td>
+          <td>35</td>
+          <td>Consultant</td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <div class="pagination" id="pagination"></div>
+  </div>
+
+  <script>
+    // Fonction de recherche dans le tableau
+    function filterTable() {
+      const input = document.getElementById("searchInput");
+      const filter = input.value.toUpperCase();
+      const table = document.getElementById("dataTable");
+      const rows = table.getElementsByTagName("tr");
+      
+      for (let i = 1; i < rows.length; i++) {
+        let cells = rows[i].getElementsByTagName("td");
+        let found = false;
+        
+        for (let j = 0; j < cells.length; j++) {
+          if (cells[j].textContent.toUpperCase().indexOf(filter) > -1) {
+            found = true;
+          }
+        }
+        
+        if (found) {
+          rows[i].style.display = "";
+        } else {
+          rows[i].style.display = "none";
+        }
+      }
+    }
+
+    // Réinitialiser le tableau de recherche
+    function resetTable() {
+      document.getElementById("searchInput").value = '';
+      filterTable();
+    }
+
+    // Fonction de tri des colonnes
+    function sortTable(n) {
+      const table = document.getElementById("dataTable");
+      const rows = table.rows;
+      let switching = true;
+      let shouldSwitch;
+      let dir = "asc"; 
+
+      while (switching) {
+        switching = false;
+        for (let i = 1; i < (rows.length - 1); i++) {
+          shouldSwitch = false;
+          const x = rows[i].getElementsByTagName("TD")[n];
+          const y = rows[i + 1].getElementsByTagName("TD")[n];
+          
+          if (dir === "asc" && x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+            shouldSwitch = true;
+            break;
+          } else if (dir === "desc" && x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+            shouldSwitch = true;
+            break;
+          }
+        }
+        
+        if (shouldSwitch) {
+          rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+          switching = true;
+        } else {
+          if (dir === "asc") {
+            dir = "desc";
+            switching = true;
+          }
+        }
+      }
+    }
+  </script>
+</body>
+</html>
